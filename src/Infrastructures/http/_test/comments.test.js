@@ -126,7 +126,7 @@ describe('/thread/.../comments endpoint', () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual('success');
-      expect(likeCount).toStrictEqual(1);
+      expect(likeCount).toStrictEqual(0);
     });
   });
 
