@@ -7,14 +7,14 @@ const routes = (handler) => ([
       auth: 'expert_exam_jwt',
     },
   },
-  {
-    method: 'PUT',
-    path: '/threads/{threadId}/comments/{commentId}/likes',
-    handler: handler.putLikesOrUnlikesCommentHandler,
-    options: {
-      auth: 'expert_exam_jwt',
-    },
-  },
+  // {
+  //   method: 'PUT',
+  //   path: '/threads/{threadId}/comments/{commentId}/likes',
+  //   handler: handler.putLikesOrUnlikesCommentHandler,
+  //   options: {
+  //     auth: 'expert_exam_jwt',
+  //   },
+  // },
   {
     method: 'DELETE',
     path: '/threads/{threadId}/comments/{commentId}',
