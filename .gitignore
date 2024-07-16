@@ -5,3 +5,5 @@ note-api-webserver.pem
 .test.env
 package-lock.json
 Bleuxstrife21_accessKeys.csv
+Forum-API-V2-Test.postman_collection.json
+Forum-API-V2-Test.postman_environment.json

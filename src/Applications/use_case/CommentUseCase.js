@@ -25,6 +25,21 @@ class CommentUseCase {
     await this._commentRepository.verifyCommentOwner({ owner, commentId });
     await this._commentRepository.deleteComment(commentId);
   }
+
+  async likesOrUnlikesComment(useCasePayload) {
+    const {
+      commentId, threadId, owner,
+    } = useCasePayload;
+    await this._threadRepository.checkThreadIsExist(threadId);
+    await this._commentRepository.checkCommentIsExist(commentId);
+    const islikesExist = await this._commentRepository
+      .checkIsLikesCommentExist({ commentId, owner });
+    if (islikesExist) {
+      await this._commentRepository.unlikesComment({ commentId, owner });
+    } else {
+      await this._commentRepository.likesComment({ commentId, owner });
+    }
+  }
 }
 
 module.exports = CommentUseCase;

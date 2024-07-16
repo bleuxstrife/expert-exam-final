@@ -6,12 +6,14 @@ const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelp
 
 const container = require('../../container');
 const createServer = require('../createServer');
+const CommentLikesTableTestHelper = require('../../../../tests/CommentLikesTableTestHelper');
 
 describe('/thread/.../comments endpoint', () => {
   let token = '';
   let userId = '';
   let commentId = '';
   afterAll(async () => {
+    await CommentLikesTableTestHelper.cleanTable();
     await CommentsTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
     await AuthenticationsTableTestHelper.cleanTable();
@@ -81,6 +83,50 @@ describe('/thread/.../comments endpoint', () => {
       expect(responseJson.data.addedComment.content).not.toEqual('');
       expect(typeof responseJson.data.addedComment.owner).toBe('string');
       expect(responseJson.data.addedComment.owner).not.toEqual('');
+    });
+  });
+
+  describe('when PUT /threads/{threadId}/comments/{commentsId}/likes', () => {
+    it('should response 200 and comment should be liked', async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: 'PUT',
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        url: `/threads/thread-123/comments/${commentId}/likes`,
+      });
+      const likeCount = await CommentLikesTableTestHelper.getCommentLikes(commentId);
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(likeCount).toStrictEqual(1);
+    });
+
+    it('should response 200 and comment should be unliked', async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: 'PUT',
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        url: `/threads/thread-123/comments/${commentId}/likes`,
+      });
+      const likeCount = await CommentLikesTableTestHelper.getCommentLikes(commentId);
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(likeCount).toStrictEqual(1);
     });
   });
 

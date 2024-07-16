@@ -36,7 +36,16 @@ const CommentLikesTableTestHelper = {
 
     await pool.query(query);
   },
+  async getCommentLikes(id) {
+    const query = {
+      text: 'SELECT COUNT(*)::int FROM comment_likes WHERE comment_id = $1',
+      values: [id],
+    };
 
+    const result = await pool.query(query);
+
+    return result.rows[0].count;
+  },
   async cleanTable() {
     await pool.query('DELETE FROM comment_likes WHERE 1=1');
   },

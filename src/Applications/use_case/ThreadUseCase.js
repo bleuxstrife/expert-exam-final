@@ -20,7 +20,9 @@ class ThreadUseCase {
     const comments = await this._commentRepository.getComments(threadId);
     const commentsWithReplies = [];
     const replyPromises = comments.map(async (e) => {
+      const likeCount = await this._commentRepository.getCommentLikes(e.id);
       const replies = await this._replyRepository.getReplies(e.id);
+      e.likeCount = likeCount;
       e.replies = replies;
       commentsWithReplies.push(e);
     });
