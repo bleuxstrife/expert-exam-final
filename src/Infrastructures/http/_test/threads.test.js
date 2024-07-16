@@ -7,6 +7,7 @@ const RepliesTableTestHelper = require('../../../../tests/RepliesTableTestHelper
 
 const container = require('../../container');
 const createServer = require('../createServer');
+const CommentLikesTableTestHelper = require('../../../../tests/CommentLikesTableTestHelper');
 
 describe('/threads endpoint', () => {
   let token = '';
@@ -15,6 +16,7 @@ describe('/threads endpoint', () => {
 
   afterAll(async () => {
     await RepliesTableTestHelper.cleanTable();
+    await CommentLikesTableTestHelper.cleanTable();
     await CommentsTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
     await AuthenticationsTableTestHelper.cleanTable();
@@ -90,6 +92,7 @@ describe('/threads endpoint', () => {
     it('should response 201 and return thread detail Object', async () => {
       // Arrange
       await CommentsTableTestHelper.addComment({ threadId, owner: userId });
+      await CommentLikesTableTestHelper.addCommentLikes({ owner: userId });
       await RepliesTableTestHelper.addReply({ owner: userId });
       const server = await createServer(container);
 
@@ -117,6 +120,8 @@ describe('/threads endpoint', () => {
 
       expect(Array.isArray(responseJson.data.thread.comments)).toBe(true);
       expect(responseJson.data.thread.comments).toHaveLength(1);
+      expect(typeof responseJson.data.thread.comments[0].likeCount).toBe('number');
+      expect(responseJson.data.thread.comments[0].likeCount).not.toEqual('');
 
       expect(Array.isArray(responseJson.data.thread.comments[0].replies)).toBe(true);
       expect(responseJson.data.thread.comments[0].replies).toHaveLength(1);

@@ -110,6 +110,8 @@ describe('ThreadUseCase', () => {
         .mockImplementation(() => Promise.resolve(mockGetThread));
       mockCommentRepository.getComments = jest.fn()
         .mockImplementation(() => Promise.resolve([mockGetComment, mockGetComment2]));
+      mockCommentRepository.getCommentLikes = jest.fn()
+        .mockImplementation(() => Promise.resolve(1));
       mockReplyRepository.getReplies = jest.fn()
         .mockImplementation(() => Promise.resolve([mockGetReply]));
 
@@ -137,6 +139,7 @@ describe('ThreadUseCase', () => {
             date: '2024-07-02T19:38:34.203Z',
             username: 'renorizky',
             is_delete: false,
+            likeCount: 1,
             replies: [
               new GetReply({
                 id: 'reply-123',
@@ -153,6 +156,7 @@ describe('ThreadUseCase', () => {
             date: '2024-07-02T19:38:34.203Z',
             username: 'renorizky',
             is_delete: true,
+            likeCount: 1,
             replies: [
               new GetReply({
                 id: 'reply-123',
@@ -168,6 +172,7 @@ describe('ThreadUseCase', () => {
 
       expect(mockThreadRepository.getThreadById).toBeCalledWith(useCasePayload.threadId);
       expect(mockCommentRepository.getComments).toBeCalledWith(useCasePayload.threadId);
+      expect(mockCommentRepository.getCommentLikes).toBeCalledWith(mockGetComment.id);
       expect(mockReplyRepository.getReplies).toBeCalledWith(mockGetComment.id);
     });
   });

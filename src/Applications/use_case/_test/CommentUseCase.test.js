@@ -94,4 +94,89 @@ describe('CommentUseCase', () => {
       expect(mockCommentRepository.deleteComment).toBeCalledWith(useCasePayload.commentId);
     });
   });
+
+  describe('likesOrUnlikesComment', () => {
+    it('should orchestrating the likes comment action correctly', async () => {
+      // Arrange
+      const useCasePayload = {
+        commentId: 'comment-123',
+        threadId: 'thread-123',
+        owner: 'user-123',
+      };
+
+      /** creating dependency of use case */
+      const mockThreadRepository = new ThreadRepository();
+      const mockCommentRepository = new CommentRepository();
+
+      /** mocking needed function */
+      mockThreadRepository.checkThreadIsExist = jest.fn()
+        .mockImplementation(() => Promise.resolve());
+      mockCommentRepository.checkCommentIsExist = jest.fn()
+        .mockImplementation(() => Promise.resolve());
+      mockCommentRepository.checkIsLikesCommentExist = jest.fn()
+        .mockImplementation(() => Promise.resolve(true));
+      mockCommentRepository.likesComment = jest.fn()
+        .mockImplementation(() => Promise.resolve());
+      mockCommentRepository.unlikesComment = jest.fn()
+        .mockImplementation(() => Promise.resolve());
+
+      /** creating use case instance */
+      const commentUseCase = new CommentUseCase({
+        commentRepository: mockCommentRepository,
+        threadRepository: mockThreadRepository,
+      });
+
+      // Action
+      await commentUseCase.likesOrUnlikesComment(useCasePayload);
+
+      // Assert
+      expect(mockThreadRepository.checkThreadIsExist).toBeCalledWith(useCasePayload.threadId);
+      expect(mockCommentRepository.checkCommentIsExist).toBeCalledWith(useCasePayload.commentId);
+      expect(mockCommentRepository.checkIsLikesCommentExist)
+        .toBeCalledWith({ owner: useCasePayload.owner, commentId: useCasePayload.commentId });
+      expect(mockCommentRepository.unlikesComment)
+        .toBeCalledWith({ owner: useCasePayload.owner, commentId: useCasePayload.commentId });
+    });
+    it('should orchestrating the unlikes comment action correctly', async () => {
+      // Arrange
+      const useCasePayload = {
+        commentId: 'comment-123',
+        threadId: 'thread-123',
+        owner: 'user-123',
+      };
+
+      /** creating dependency of use case */
+      const mockThreadRepository = new ThreadRepository();
+      const mockCommentRepository = new CommentRepository();
+
+      /** mocking needed function */
+      mockThreadRepository.checkThreadIsExist = jest.fn()
+        .mockImplementation(() => Promise.resolve());
+      mockCommentRepository.checkCommentIsExist = jest.fn()
+        .mockImplementation(() => Promise.resolve());
+      mockCommentRepository.checkIsLikesCommentExist = jest.fn()
+        .mockImplementation(() => Promise.resolve(false));
+      mockCommentRepository.likesComment = jest.fn()
+        .mockImplementation(() => Promise.resolve());
+      mockCommentRepository.unlikesComment = jest.fn()
+        .mockImplementation(() => Promise.resolve());
+
+      /** creating use case instance */
+      const commentUseCase = new CommentUseCase({
+        commentRepository: mockCommentRepository,
+        threadRepository: mockThreadRepository,
+      });
+
+      // Action
+      await commentUseCase.likesOrUnlikesComment(useCasePayload);
+
+      // Assert
+      expect(mockThreadRepository.checkThreadIsExist).toBeCalledWith(useCasePayload.threadId);
+      expect(mockCommentRepository.checkCommentIsExist).toBeCalledWith(useCasePayload.commentId);
+      expect(mockCommentRepository.checkIsLikesCommentExist)
+        .toBeCalledWith({ owner: useCasePayload.owner, commentId: useCasePayload.commentId });
+      expect(mockCommentRepository.likesComment)
+        .toBeCalledWith({ owner: useCasePayload.owner, commentId: useCasePayload.commentId });
+    });
+  });
 });

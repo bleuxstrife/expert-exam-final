@@ -41,5 +41,20 @@ class CommentsHandler {
       status: 'success',
     };
   }
+
+  async putLikesOrUnlikesCommentHandler(request, h) {
+    const commentUseCase = this._container.getInstance(CommentUseCase.name);
+    const { threadId, commentId } = request.params;
+    const { id } = request.auth.credentials;
+    const useCasePayload = {
+      commentId, owner: id, threadId,
+    };
+
+    await commentUseCase.likesOrUnlikesComment(useCasePayload);
+
+    return {
+      status: 'success',
+    };
+  }
 }
 module.exports = CommentsHandler;

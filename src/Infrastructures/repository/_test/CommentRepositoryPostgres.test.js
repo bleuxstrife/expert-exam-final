@@ -198,6 +198,8 @@ describe('CommentRepositoryPostgres', () => {
 
       // Action
       const isExist = await commentRepo.checkIsLikesCommentExist(likesComment);
+
+      // Assert
       expect(isExist).toStrictEqual(true);
     });
 
@@ -214,6 +216,8 @@ describe('CommentRepositoryPostgres', () => {
 
       // Action
       const isExist = await commentRepo.checkIsLikesCommentExist(likesComment);
+
+      // Assert
       expect(isExist).toStrictEqual(false);
     });
   });
@@ -231,6 +235,8 @@ describe('CommentRepositoryPostgres', () => {
 
       // Action
       await commentRepo.likesComment(likesComment);
+
+      // Assert
       const likes = await CommentLikesTableTestHelper.findCommentLikesById('like-123');
       expect(likes).toHaveLength(1);
     });
@@ -249,8 +255,25 @@ describe('CommentRepositoryPostgres', () => {
 
       // Action
       await commentRepo.unlikesComment(likesComment);
+
+      // Assert
       const likes = await CommentLikesTableTestHelper.findCommentLikesById('like-123');
       expect(likes).toHaveLength(0);
+    });
+  });
+
+  describe('getCommentLikes function', () => {
+    it('it should persist retun likes count in comment correctly', async () => {
+      // Arrange
+      const id = 'comment-123';
+      const commentRepo = new CommentRepositoryPostgres(pool, {});
+      await CommentsTableTestHelper.addComment({});
+      await CommentLikesTableTestHelper.addCommentLikes({});
+
+      // Action
+      const likesCount = await commentRepo.getCommentLikes(id);
+
+      expect(likesCount).toStrictEqual(1);
     });
   });
 });
