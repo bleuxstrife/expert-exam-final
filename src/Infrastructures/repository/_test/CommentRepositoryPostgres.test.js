@@ -217,4 +217,40 @@ describe('CommentRepositoryPostgres', () => {
       expect(isExist).toStrictEqual(false);
     });
   });
+
+  describe('likesComment function', () => {
+    it('it should persist create likes comment correctly', async () => {
+      // Arrange
+      const likesComment = {
+        commentId: 'comment-123',
+        owner: 'user-123',
+      };
+      const fakeIdGenerator = () => '123'; // stub!
+      const commentRepo = new CommentRepositoryPostgres(pool, fakeIdGenerator);
+      await CommentsTableTestHelper.addComment({});
+
+      // Action
+      await commentRepo.likesComment(likesComment);
+      const likes = await CommentLikesTableTestHelper.findCommentLikesById('like-123');
+      expect(likes).toHaveLength(1);
+    });
+  });
+
+  describe('unlikesComment function', () => {
+    it('it should persist delete likes comment correctly', async () => {
+      // Arrange
+      const likesComment = {
+        commentId: 'comment-123',
+        owner: 'user-123',
+      };
+      const commentRepo = new CommentRepositoryPostgres(pool, {});
+      await CommentsTableTestHelper.addComment({});
+      await CommentLikesTableTestHelper.addCommentLikes({});
+
+      // Action
+      await commentRepo.unlikesComment(likesComment);
+      const likes = await CommentLikesTableTestHelper.findCommentLikesById('like-123');
+      expect(likes).toHaveLength(0);
+    });
+  });
 });

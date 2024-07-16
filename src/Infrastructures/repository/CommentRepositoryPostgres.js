@@ -111,9 +111,8 @@ class CommentRepositoryPostgres extends CommentRepository {
 
   async unlikesComment(unlikesComment) {
     const { commentId, owner } = unlikesComment;
-    const id = `likes-${this._idGenerator()}`;
     const query = {
-      text: 'DELETE FROM comment_likes WHERE comment_id = $1 AND owner = $ 2',
+      text: 'DELETE FROM comment_likes WHERE comment_id = $1 AND owner = $2',
       values: [commentId, owner],
     };
 
